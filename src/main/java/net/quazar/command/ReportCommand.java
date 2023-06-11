@@ -42,6 +42,7 @@ public class ReportCommand implements Command {
         }
 
         if (referencedMessage.getAuthor().isBot()) return;
+        if (referencedMessage.getAuthor().getIdLong() == event.getAuthor().getIdLong()) return;
 
         String comment = null;
         if (args.length > 0)
@@ -72,8 +73,8 @@ public class ReportCommand implements Command {
                                 .queue();
 
                     RestAction.allOf(
-                            message.addReaction(Emoji.fromCustom("accepted", 1115748659737403472L, false)),
-                            message.addReaction(Emoji.fromCustom("denied", 1115748674480373800L, false))
+                            message.addReaction(Emoji.fromCustom("accepted", ReportBot.Emojis.ACCEPTED, false)),
+                            message.addReaction(Emoji.fromCustom("denied", ReportBot.Emojis.DENIED, false))
                     ).queue();
                 });
     }

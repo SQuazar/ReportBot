@@ -1,6 +1,5 @@
 package net.quazar.command;
 
-import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.quazar.repository.DisabledNotificationsRepository;
 

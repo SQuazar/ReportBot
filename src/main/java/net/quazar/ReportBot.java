@@ -44,4 +44,9 @@ public class ReportBot {
         public static final Color REPORT_ACCEPTED_COLOR = new Color(11, 231, 99);
         public static final Color REPOST_DENIED_COLOR = new Color(245, 53, 35);
     }
+
+    public static class Emojis {
+        public static final long ACCEPTED = 480443108509876224L;
+        public static final long DENIED = 480443108803477517L;
+    }
 }

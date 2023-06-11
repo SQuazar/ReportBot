@@ -9,8 +9,8 @@ import net.quazar.ReportBot;
 
 @AllArgsConstructor
 public class MessageReactionHandler extends ListenerAdapter {
-    private static final String ACCEPTED = "accepted:1115748659737403472";
-    public static final String DENIED = "denied:1115748674480373800";
+    private static final String ACCEPTED = "accepted:" + ReportBot.Emojis.ACCEPTED;
+    public static final String DENIED = "denied:" + ReportBot.Emojis.DENIED;
 
     private final long guildId;
     private final long moderatorRoleId;
