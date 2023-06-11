@@ -4,19 +4,28 @@ plugins {
 
 group = "net.quazar"
 version = "1.0-SNAPSHOT"
+compileJava.options.encoding = 'UTF-8'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+    compileOnly 'org.projectlombok:lombok:1.18.28'
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    implementation("net.dv8tion:JDA:VERSION") {
+    implementation("net.dv8tion:JDA:5.0.0-beta.8") {
         exclude module: 'opus-java'
     }
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }

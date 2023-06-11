@@ -1,7 +1,7 @@
 package net.quazar.command;
 
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public interface SlashCommand {
-    void execute(SlashCommandInteractionEvent event);
+public interface Command {
+    void execute(MessageReceivedEvent event, String[] args);
 }
