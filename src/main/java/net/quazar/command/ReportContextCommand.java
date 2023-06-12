@@ -34,11 +34,11 @@ public class ReportContextCommand implements ContextCommand {
                     .sendMessage("Вы не можете пожаловаться на бота").queue();
             return;
         }
-//        if (target.getAuthor().getIdLong() == event.getUser().getIdLong()) {
-//            event.getHook().setEphemeral(true)
-//                    .sendMessage("Вы не можете отправить жалобу на самого себя").queue();
-//            return;
-//        }
+        if (target.getAuthor().getIdLong() == event.getUser().getIdLong()) {
+            event.getHook().setEphemeral(true)
+                    .sendMessage("Вы не можете отправить жалобу на самого себя").queue();
+            return;
+        }
 
         EmbedBuilder reportBuilder = new EmbedBuilder()
                 .setTitle("Новая жалоба")
