@@ -3,11 +3,14 @@ package net.quazar;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.quazar.command.NotifyCommand;
 import net.quazar.command.ReportCommand;
 import net.quazar.config.BotConfig;
 import net.quazar.handler.CommandHandler;
+import net.quazar.handler.ContextCommandHandler;
 import net.quazar.handler.MessageReactionHandler;
 import net.quazar.registry.CommandRegistry;
 import net.quazar.repository.DisabledNotificationsRepository;
@@ -35,7 +38,13 @@ public class ReportBot {
                 disabledNotificationsRepository));
         commandRegistry.register("notify", new NotifyCommand(disabledNotificationsRepository));
 
+        jda.updateCommands().addCommands(
+                Commands.context(Command.Type.MESSAGE, "Пожаловаться")
+                        .setGuildOnly(true)
+        ).queue();
+
         jda.addEventListener(new CommandHandler(commandRegistry));
+        jda.addEventListener(new ContextCommandHandler(config.getReportChannel(), config.getGuildId()));
         jda.addEventListener(new MessageReactionHandler(config.getGuildId(), config.getModeratorRoleId()));
     }
 
