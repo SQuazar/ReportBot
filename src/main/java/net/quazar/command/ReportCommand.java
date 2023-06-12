@@ -12,6 +12,7 @@ import net.quazar.ReportBot;
 import net.quazar.repository.DisabledNotificationsRepository;
 
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class ReportCommand implements Command {
@@ -56,14 +57,22 @@ public class ReportCommand implements Command {
                         event.getMember().getEffectiveAvatarUrl()
                 )
                 .addField("Нарушитель", referencedMessage.getAuthor().getAsMention(), false)
-                .addField("Сообщение", referencedMessage.getContentDisplay(), false)
-                .addField("Ссылка на сообщение", referencedMessage.getJumpUrl(), false)
                 .setColor(ReportBot.Colors.REPORT_COLOR);
+        if (!referencedMessage.getContentDisplay().isEmpty())
+            reportBuilder.addField("Сообщение", referencedMessage.getContentDisplay(), false);
+        reportBuilder.addField("Ссылка на сообщение", referencedMessage.getJumpUrl(), false);
         if (comment != null)
             reportBuilder.addField("Комментарий", comment, false);
         MessageEmbed report = reportBuilder.build();
 
         reportChannel.sendMessageEmbeds(report)
+                .setContent(referencedMessage.getAttachments().size() > 0 ?
+                        "Вложения:\n" + String.join("\n",
+                                referencedMessage.getAttachments()
+                                        .stream()
+                                        .map(Message.Attachment::getUrl)
+                                        .collect(Collectors.toSet()))
+                        : null)
                 .setAllowedMentions(Collections.emptyList())
                 .queue(message -> {
                     if (!repository.contains(event.getAuthor().getIdLong()))
