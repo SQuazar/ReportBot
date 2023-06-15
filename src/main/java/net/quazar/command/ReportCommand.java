@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -11,19 +12,22 @@ import net.dv8tion.jda.api.requests.RestAction;
 import net.quazar.ReportBot;
 import net.quazar.repository.DisabledNotificationsRepository;
 
+import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class ReportCommand implements Command {
+public class ReportCommand implements Command, CooldownCommand {
     private final long reportChanelId;
     private final long guildId;
     private final DisabledNotificationsRepository repository;
 
     @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
-        if (!event.isFromGuild()) return;
-        if (event.getGuild().getIdLong() != guildId) return;
+    public boolean execute(MessageReceivedEvent event, String[] args) {
+        if (!event.isFromGuild()) return false;
+        if (event.getGuild().getIdLong() != guildId) return false;
 
         event.getMessage().delete().queue();
         TextChannel reportChannel = event.getGuild().getTextChannelById(reportChanelId);
@@ -31,7 +35,7 @@ public class ReportCommand implements Command {
             event.getAuthor().openPrivateChannel().onSuccess(privateChannel ->
                             privateChannel.sendMessage("[!report] Канал для репортов не найден. Приносим свои извинения").queue())
                     .queue();
-            return;
+            return false;
         }
 
         Message referencedMessage = event.getMessage().getReferencedMessage();
@@ -39,11 +43,11 @@ public class ReportCommand implements Command {
             event.getAuthor().openPrivateChannel().onSuccess(privateChannel ->
                             privateChannel.sendMessage("[!report] Вы должны ссылаться на конкретное сообщение.").queue())
                     .queue();
-            return;
+            return false;
         }
 
-        if (referencedMessage.getAuthor().isBot()) return;
-        if (referencedMessage.getAuthor().getIdLong() == event.getAuthor().getIdLong()) return;
+        if (referencedMessage.getAuthor().isBot()) return false;
+//        if (referencedMessage.getAuthor().getIdLong() == event.getAuthor().getIdLong()) return;
 
         String comment = null;
         if (args.length > 0)
@@ -87,5 +91,24 @@ public class ReportCommand implements Command {
                             message.addReaction(Emoji.fromCustom("gori_gori", ReportBot.Emojis.DELETE, false))
                     ).queue();
                 });
+        return true;
+    }
+
+    private final Map<Long, Long> cooldownUsers = new HashMap<>();
+
+    @Override
+    public boolean hasCooldown(User user) {
+        cooldownUsers.values().removeIf(cooldown -> cooldown < System.currentTimeMillis());
+        return cooldownUsers.containsKey(user.getIdLong());
+    }
+
+    @Override
+    public void cooldown(User user) {
+        cooldownUsers.put(user.getIdLong(), System.currentTimeMillis() + getCooldown().toMillis());
+    }
+
+    @Override
+    public Duration getCooldown() {
+        return Duration.ofSeconds(30);
     }
 }

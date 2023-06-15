@@ -3,28 +3,32 @@ package net.quazar.command;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.quazar.ReportBot;
 
+import java.time.Duration;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class ReportContextCommand implements ContextCommand {
+public class ReportContextCommand implements ContextCommand, CooldownCommand {
     private final long reportChannel;
 
     @Override
-    public void execute(MessageContextInteractionEvent event) {
+    public boolean execute(MessageContextInteractionEvent event) {
         event.deferReply(true).queue();
 
         TextChannel reportsChannel = event.getGuild().getTextChannelById(reportChannel);
         if (reportsChannel == null) {
             event.getHook().setEphemeral(true)
                     .sendMessage("Канал для репортов не найден. Приносим свои извинения").queue();
-            return;
+            return false;
         }
 
         Message target = event.getTarget();
@@ -32,12 +36,12 @@ public class ReportContextCommand implements ContextCommand {
         if (target.getAuthor().isBot()) {
             event.getHook().setEphemeral(true)
                     .sendMessage("Вы не можете пожаловаться на бота").queue();
-            return;
+            return false;
         }
         if (target.getAuthor().getIdLong() == event.getUser().getIdLong()) {
             event.getHook().setEphemeral(true)
                     .sendMessage("Вы не можете отправить жалобу на самого себя").queue();
-            return;
+            return false;
         }
 
         EmbedBuilder reportBuilder = new EmbedBuilder()
@@ -72,5 +76,24 @@ public class ReportContextCommand implements ContextCommand {
                             message.addReaction(Emoji.fromCustom("gori_gori", ReportBot.Emojis.DELETE, false))
                     ).queue();
                 });
+        return true;
+    }
+
+    private final Map<Long, Long> cooldownUsers = new HashMap<>();
+
+    @Override
+    public boolean hasCooldown(User user) {
+        cooldownUsers.values().removeIf(cooldown -> cooldown < System.currentTimeMillis());
+        return cooldownUsers.containsKey(user.getIdLong());
+    }
+
+    @Override
+    public void cooldown(User user) {
+        cooldownUsers.put(user.getIdLong(), System.currentTimeMillis() + getCooldown().toMillis());
+    }
+
+    @Override
+    public Duration getCooldown() {
+        return Duration.ofSeconds(30);
     }
 }
