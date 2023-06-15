@@ -11,6 +11,7 @@ import net.quazar.ReportBot;
 public class MessageReactionHandler extends ListenerAdapter {
     private static final String ACCEPTED = "accepted:" + ReportBot.Emojis.ACCEPTED;
     public static final String DENIED = "denied:" + ReportBot.Emojis.DENIED;
+    public static final String DELETE = "gori_gori:" + ReportBot.Emojis.DELETE;
 
     private final long guildId;
     private final long moderatorRoleId;
@@ -41,6 +42,10 @@ public class MessageReactionHandler extends ListenerAdapter {
                 edited = new EmbedBuilder(embed)
                         .setColor(ReportBot.Colors.REPOST_DENIED_COLOR)
                         .build();
+            if (event.getEmoji().getAsReactionCode().equals(DELETE)) {
+                message.delete().queue();
+                return;
+            }
 
             if (edited != null) {
                 message.clearReactions().queue();

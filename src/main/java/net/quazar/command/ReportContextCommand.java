@@ -43,7 +43,7 @@ public class ReportContextCommand implements ContextCommand {
         EmbedBuilder reportBuilder = new EmbedBuilder()
                 .setTitle("Новая жалоба")
                 .setAuthor(
-                        event.getUser().getAsTag() + "|" + event.getUser().getIdLong(),
+                        event.getUser().getAsTag() + " | " + event.getUser().getIdLong(),
                         null,
                         event.getMember().getEffectiveAvatarUrl()
                 )
@@ -68,7 +68,8 @@ public class ReportContextCommand implements ContextCommand {
 
                     RestAction.allOf(
                             message.addReaction(Emoji.fromCustom("accepted", ReportBot.Emojis.ACCEPTED, false)),
-                            message.addReaction(Emoji.fromCustom("denied", ReportBot.Emojis.DENIED, false))
+                            message.addReaction(Emoji.fromCustom("denied", ReportBot.Emojis.DENIED, false)),
+                            message.addReaction(Emoji.fromCustom("gori_gori", ReportBot.Emojis.DELETE, false))
                     ).queue();
                 });
     }

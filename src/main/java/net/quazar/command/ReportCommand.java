@@ -52,7 +52,7 @@ public class ReportCommand implements Command {
         EmbedBuilder reportBuilder = new EmbedBuilder()
                 .setTitle("Новая жалоба")
                 .setAuthor(
-                        event.getAuthor().getAsTag() + "|" + event.getAuthor().getIdLong(),
+                        event.getAuthor().getAsTag() + " | " + event.getAuthor().getIdLong(),
                         null,
                         event.getMember().getEffectiveAvatarUrl()
                 )
@@ -83,7 +83,8 @@ public class ReportCommand implements Command {
 
                     RestAction.allOf(
                             message.addReaction(Emoji.fromCustom("accepted", ReportBot.Emojis.ACCEPTED, false)),
-                            message.addReaction(Emoji.fromCustom("denied", ReportBot.Emojis.DENIED, false))
+                            message.addReaction(Emoji.fromCustom("denied", ReportBot.Emojis.DENIED, false)),
+                            message.addReaction(Emoji.fromCustom("gori_gori", ReportBot.Emojis.DELETE, false))
                     ).queue();
                 });
     }

@@ -57,5 +57,6 @@ public class ReportBot {
     public static class Emojis {
         public static final long ACCEPTED = 480443108509876224L;
         public static final long DENIED = 480443108803477517L;
+        public static final long DELETE = 927350314967912549L;
     }
 }
