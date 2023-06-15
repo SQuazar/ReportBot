@@ -56,7 +56,7 @@ public class ReportCommand implements Command, CooldownCommand {
         EmbedBuilder reportBuilder = new EmbedBuilder()
                 .setTitle("Новая жалоба")
                 .setAuthor(
-                        event.getAuthor().getAsTag() + " | " + event.getAuthor().getIdLong(),
+                        event.getAuthor().getName() + " | " + event.getAuthor().getIdLong(),
                         null,
                         event.getMember().getEffectiveAvatarUrl()
                 )
@@ -109,6 +109,6 @@ public class ReportCommand implements Command, CooldownCommand {
 
     @Override
     public Duration getCooldown() {
-        return Duration.ofSeconds(30);
+        return Duration.ofMinutes(3);
     }
 }

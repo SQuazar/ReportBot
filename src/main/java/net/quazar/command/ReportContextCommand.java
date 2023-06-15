@@ -47,7 +47,7 @@ public class ReportContextCommand implements ContextCommand, CooldownCommand {
         EmbedBuilder reportBuilder = new EmbedBuilder()
                 .setTitle("Новая жалоба")
                 .setAuthor(
-                        event.getUser().getAsTag() + " | " + event.getUser().getIdLong(),
+                        event.getUser().getName() + " | " + event.getUser().getIdLong(),
                         null,
                         event.getMember().getEffectiveAvatarUrl()
                 )
@@ -94,6 +94,6 @@ public class ReportContextCommand implements ContextCommand, CooldownCommand {
 
     @Override
     public Duration getCooldown() {
-        return Duration.ofSeconds(30);
+        return Duration.ofMinutes(3);
     }
 }
