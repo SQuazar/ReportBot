@@ -11,8 +11,8 @@ public class NotifyCommand implements Command {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String[] args) {
-        if (event.isFromGuild()) return;
+    public boolean execute(MessageReceivedEvent event, String[] args) {
+        if (event.isFromGuild()) return false;
         long authorId = event.getAuthor().getIdLong();
         if (!repository.contains(authorId)) {
             repository.add(authorId);
@@ -22,5 +22,6 @@ public class NotifyCommand implements Command {
             repository.remove(authorId);
             event.getChannel().sendMessage("Уведомления включены").queue();
         }
+        return true;
     }
 }
