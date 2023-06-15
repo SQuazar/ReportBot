@@ -54,7 +54,11 @@ public class ReportContextCommand implements ContextCommand, CooldownCommand {
                 .addField("Нарушитель", target.getAuthor().getAsMention(), false)
                 .setColor(ReportBot.Colors.REPORT_COLOR);
         if (!target.getContentDisplay().isEmpty())
-            reportBuilder.addField("Сообщение", target.getContentDisplay(), false);
+            reportBuilder.addField(
+                    "Сообщение",
+                    target.getContentDisplay().length() > 1024 ? target.getContentDisplay().substring(0, 1024) : target.getContentDisplay(),
+                    false
+            );
         reportBuilder.addField("Ссылка на сообщение", target.getJumpUrl(), false);
 
         reportsChannel.sendMessageEmbeds(reportBuilder.build())

@@ -47,7 +47,7 @@ public class ReportCommand implements Command, CooldownCommand {
         }
 
         if (referencedMessage.getAuthor().isBot()) return false;
-//        if (referencedMessage.getAuthor().getIdLong() == event.getAuthor().getIdLong()) return;
+        if (referencedMessage.getAuthor().getIdLong() == event.getAuthor().getIdLong()) return false;
 
         String comment = null;
         if (args.length > 0)
@@ -63,10 +63,16 @@ public class ReportCommand implements Command, CooldownCommand {
                 .addField("Нарушитель", referencedMessage.getAuthor().getAsMention(), false)
                 .setColor(ReportBot.Colors.REPORT_COLOR);
         if (!referencedMessage.getContentDisplay().isEmpty())
-            reportBuilder.addField("Сообщение", referencedMessage.getContentDisplay(), false);
+            reportBuilder.addField(
+                    "Сообщение",
+                    referencedMessage.getContentDisplay().length() > 1024 ? referencedMessage.getContentDisplay().substring(0, 1024) : referencedMessage.getContentDisplay(),
+                    false);
         reportBuilder.addField("Ссылка на сообщение", referencedMessage.getJumpUrl(), false);
         if (comment != null)
-            reportBuilder.addField("Комментарий", comment, false);
+            reportBuilder.addField(
+                    "Комментарий",
+                    comment.length() > 1024 ? comment.substring(0, 1024) : comment,
+                    false);
         MessageEmbed report = reportBuilder.build();
 
         reportChannel.sendMessageEmbeds(report)
