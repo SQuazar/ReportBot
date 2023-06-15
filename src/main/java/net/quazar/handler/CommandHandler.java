@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.quazar.command.Command;
+import net.quazar.command.CooldownCommand;
 import net.quazar.registry.CommandRegistry;
 
 import java.util.Optional;
@@ -37,13 +38,26 @@ public class CommandHandler extends ListenerAdapter {
             return;
         }
 
-        Optional<Command> cmd = commandRegistry.findCommand(command);
-        if (cmd.isPresent()) {
+        Optional<Command> cmdOptional = commandRegistry.findCommand(command);
+        if (cmdOptional.isPresent()) {
+            Command cmd = cmdOptional.get();
+            if (cmd instanceof CooldownCommand) {
+                CooldownCommand cooldownCommand = (CooldownCommand) cmd;
+                if (cooldownCommand.hasCooldown(event.getAuthor())) {
+                    event.getAuthor().openPrivateChannel().onSuccess(channel ->
+                            channel.sendMessage("[!report] Вы отправляете жалобы слишком часто!").queue()
+                    ).queue();
+                    return;
+                }
+            }
+
             String[] args = new String[0];
             String subs;
             if ((subs = message.substring(command.length() + 1).trim()).length() > 0)
                 args = subs.split(" ");
-            cmd.get().execute(event, args);
+            if (cmd.execute(event, args))
+                if (cmd instanceof CooldownCommand)
+                    ((CooldownCommand) cmd).cooldown(event.getAuthor());
             return;
         }
 
