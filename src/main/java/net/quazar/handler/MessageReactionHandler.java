@@ -37,10 +37,12 @@ public class MessageReactionHandler extends ListenerAdapter {
             if (event.getEmoji().getAsReactionCode().equals(ACCEPTED))
                 edited = new EmbedBuilder(embed)
                         .setColor(ReportBot.Colors.REPORT_ACCEPTED_COLOR)
+                        .addField("Модератор", event.getUser().getAsMention(), false)
                         .build();
             if (event.getEmoji().getAsReactionCode().equals(DENIED))
                 edited = new EmbedBuilder(embed)
                         .setColor(ReportBot.Colors.REPOST_DENIED_COLOR)
+                        .addField("Модератор", event.getUser().getAsMention(), false)
                         .build();
             if (event.getEmoji().getAsReactionCode().equals(DELETE)) {
                 message.delete().queue();
