@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
-import net.dv8tion.jda.api.events.interaction.command.MessageContextInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.GenericContextInteractionEvent;
 import net.dv8tion.jda.api.requests.RestAction;
 import net.quazar.ReportBot;
 
@@ -17,11 +17,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class ReportContextCommand implements ContextCommand, CooldownCommand {
+public class ReportContextCommand implements ContextCommand<Message>, CooldownCommand {
     private final long reportChannel;
 
     @Override
-    public boolean execute(MessageContextInteractionEvent event) {
+    public boolean execute(GenericContextInteractionEvent<Message> event) {
         event.deferReply(true).queue();
 
         TextChannel reportsChannel = event.getGuild().getTextChannelById(reportChannel);
