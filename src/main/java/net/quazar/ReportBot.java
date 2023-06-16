@@ -40,6 +40,8 @@ public class ReportBot {
 
         jda.updateCommands().addCommands(
                 Commands.context(Command.Type.MESSAGE, "Пожаловаться")
+                        .setGuildOnly(true),
+                Commands.context(Command.Type.USER, "Пожаловаться на аватар")
                         .setGuildOnly(true)
         ).queue();
 
